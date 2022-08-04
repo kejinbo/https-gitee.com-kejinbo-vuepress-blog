@@ -1,7 +1,7 @@
 ---
 title: 算法
-author: kjinbo
+author: kebobo
 date: '2022-02-22'
 ---
 
-## 算法
+> 该系列是记录学习算法的总结
