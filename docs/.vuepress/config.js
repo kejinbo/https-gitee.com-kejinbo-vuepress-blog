@@ -1,6 +1,6 @@
-const fs = require('fs');
+const fs = require('node:fs');
 const path = require("path");
-// const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 // const WriteFilePlugin = require("write-file-webpack-plugin");
 
 module.exports = {
@@ -74,48 +74,93 @@ module.exports = {
     // console.log(path.join(__dirname, "public"));
     // config.devServer.contentBase = path.join(__dirname, "public");
 
-    // config.module
-    //   .rule("docxFiles")
-    //   .test(/.(docx|doc|xlsx|xls)(\?.*)?$/)
-    //   .use("file-loader")
-    //   .loader("file-loader")
-    //   .tap(() => ({
-    //     name: "assets/files/[name].[hash:8].[ext]",
-    //   }))
-    //   .end();
+    config.module
+      .rule("docx-files")
+      .test(/.(docx|doc|xlsx|xls)(\?.*)?$/)
+        .use("file-loader")
+        .loader("file-loader")
+        .options({
+          limit: 1000,
+          name: `assets/files/[name].[hash:8].[ext]`
+        })
+      .end();
   },
   markdown: {
     lineNumbers: true,
     extendMarkdown: (md) => {
-      const iterator = require("markdown-it-for-inline");
-      md.use(iterator, "url_new_win", "link_open", function(tokens, idx) {
-        console.log('link_open', this, tokens, idx);
-        throw new Error();
-        const assestsPath = path.join(__dirname, 'public/files')
-        const aIndex = tokens[idx].attrIndex("href");
-        const aDownloadIdx = tokens[idx].attrIndex("download");
+      // const iterator = require("markdown-it-for-inline");
+      // md.use(iterator, "files_link", "link_open", function(tokens, idx) {
+      //   // console.log('link_open', this, tokens, idx);
+      //   const assestsPath = path.join(__dirname, 'public/files')
+      //   const aIndex = tokens[idx].attrIndex("href");
+      //   const aDownloadIdx = tokens[idx].attrIndex("download");
 
+      //   if (aIndex > -1) {
+      //     const href = tokens[idx].attrs[aIndex][1];
+      //     const vaildExtNameArr = [".docx", ".doc", ".xlsx", ".xls"];
+      //     const extNmae = path.extname(href);
+      //     if (path.isAbsolute(href)) {
+      //       // console.log(tokens[idx]);
+      //       if (vaildExtNameArr.includes(extNmae)) {
+      //         if (aDownloadIdx < 0) {
+      //           const filePath = path.join(__dirname, href);
+      //           console.log(filePath, fs.existsSync(filePath));
+      //           // tokens[idx].attrs[aIndex][1] = href;
+      //           // tokens[idx].attrPush(["download", path.basename(filePath)]);
+      //           // tokens[idx].attrPush(["data-download-link", filePath]);
+      //           tokens[idx].attrPush(["class", "download-docs-file-btn"]);
+      //         }
+      //         // const copyPath = path.join(__dirname, `../assets/${path.basename(filePath)}`);
+      //         // console.log("path ", path.basename(filePath), path.join(__dirname, `../${path.basename(filePath)}`));
+      //       }
+      //     } else {
+      //       // 相对路径
+      //       if (vaildExtNameArr.includes(extNmae)) {
+      //         // console.log(href, tokens[idx], tokens[idx + 1]);
+      //         tokens[idx].info = `<div>123</div>`;
+      //       }
+      //     }
+      //   }
+      // });
+      const defaultRender = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
+        return self.renderToken(tokens, idx, options);
+      };
+      const that = this;
+      md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+        const aIndex = tokens[idx].attrIndex("href");
+        // console.log('aIndex', tokens, idx, options, env, self);
         if (aIndex > -1) {
           const href = tokens[idx].attrs[aIndex][1];
           const vaildExtNameArr = [".docx", ".doc", ".xlsx", ".xls"];
-          if (path.isAbsolute(href)) {
-            // console.log(tokens[idx]);
-            const extNmae = path.extname(href);
-            if (vaildExtNameArr.includes(extNmae)) {
-              if (aDownloadIdx < 0) {
-                const filePath = path.join(__dirname, href);
-                console.log(filePath, fs.existsSync(filePath));
-                // tokens[idx].attrs[aIndex][1] = href;
-                // tokens[idx].attrPush(["download", path.basename(filePath)]);
-                // tokens[idx].attrPush(["data-download-link", filePath]);
-                tokens[idx].attrPush(["class", "download-docs-file-btn"]);
-              }
-              // const copyPath = path.join(__dirname, `../assets/${path.basename(filePath)}`);
-              // console.log("path ", path.basename(filePath), path.join(__dirname, `../${path.basename(filePath)}`));
+          const extNmae = path.extname(href);
+          if (vaildExtNameArr.includes(extNmae)) {
+            
+            if (path.isAbsolute(href)) {
+
+            } else {
+              // 方法一：将解析到的文件，复制到public中，通过vuepress提供的功能，将public中的文件打包上去
+              // const docsFilePath = path.resolve(__dirname, '../', env.relativePath, '../', href);
+              // const docsFileDirname = path.dirname(path.join(env.relativePath, '../', href));
+              // const copyToPath = path.resolve(__dirname, './public/files', docsFileDirname);
+              // const basename = path.basename(docsFilePath);
+              // // console.log('docsFilePath', docsFilePath, docsFileDirname, copyToPath);
+              // if (!fs.existsSync(copyToPath)) {
+              //   fs.mkdirSync(copyToPath, { recursive: true });
+              // }
+              // const data = fs.readFileSync(docsFilePath, 'utf8');
+              // fs.writeFileSync(path.join(copyToPath, basename), data, 'utf8');
+              // if (fs.existsSync(path.join(copyToPath, basename))) {
+              //   tokens[idx].attrs[aIndex][1] = path.join('/blog/files', docsFileDirname, basename);
+              //   tokens[idx].attrPush(["download", basename]);
+              // }
+
+              // 方法二：
             }
           }
         }
-      });
+
+        return defaultRender(tokens, idx, options, env, self);
+      };
     },
   },
 };

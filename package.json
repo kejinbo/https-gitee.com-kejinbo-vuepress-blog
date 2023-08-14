@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "copy-webpack-plugin": "^5.0.2",
     "markdown-it-for-inline": "^0.1.1",
     "vuepress": "^1.9.7",
     "vuepress-plugin-cursor-effects": "^1.1.4",
