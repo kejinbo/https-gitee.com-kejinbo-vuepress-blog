@@ -1,5 +1,6 @@
-const fs = require('node:fs');
+const fs = require("node:fs");
 const path = require("path");
+const decodeChar = require("./tools/decode-char");
 
 module.exports = {
   title: "Blog",
@@ -73,53 +74,67 @@ module.exports = {
     config.module
       .rule("docx-files")
       .test(/.(docx|doc|xlsx|xls)(\?.*)?$/)
-        .use("file-loader")
-        .loader("file-loader")
-        .options({
-          limit: 1000,
-          name: `assets/files/[name].[hash:8].[ext]`
-        })
+      .use("file-loader")
+      .loader("file-loader")
+      .options({
+        limit: 1000,
+        name: `assets/files/[name].[hash:8].[ext]`,
+      })
       .end();
   },
   markdown: {
     lineNumbers: true,
     extendMarkdown: (md) => {
-      const defaultRender = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
-        return self.renderToken(tokens, idx, options);
-      };
-      const that = this;
-      md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-        const aIndex = tokens[idx].attrIndex("href");
-        // console.log('aIndex', tokens, idx, options, env, self);
-        if (aIndex > -1) {
-          const href = tokens[idx].attrs[aIndex][1];
-          const vaildExtNameArr = [".docx", ".doc", ".xlsx", ".xls"];
-          const extNmae = path.extname(href);
-          if (vaildExtNameArr.includes(extNmae)) {
-            // 方法一：将解析到的文件，复制到public中，通过vuepress提供的功能，将public中的文件打包上去
-            if (path.isAbsolute(href)) {
+      const defaultRender =
+        md.renderer.rules.link_open ||
+        function (tokens, idx, options, env, self) {
+          return self.renderToken(tokens, idx, options);
+        };
+      // 方法一：将解析到的文件，复制到public中，通过vuepress提供的功能，将public中的文件打包上去
+      try {
+        md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+          const aIndex = tokens[idx].attrIndex("href");
+          const sizeLimit = 1 * 10000 * 1000; // 1M
+          if (aIndex > -1) {
+            const vaildExtNameArr = [".docx", ".doc", ".xlsx", ".xls"];
+            const href = decodeChar.decodeURL(tokens[idx].attrs[aIndex][1]);
+            const extNmae = path.extname(href).toLowerCase();
+            console.log("href", href, extNmae);
 
-            } else {
-              const docsFilePath = path.resolve(__dirname, '../', env.relativePath, '../', href);
-              const docsFileDirname = path.dirname(path.join(env.relativePath, '../', href));
-              const copyToPath = path.resolve(__dirname, './public/files', docsFileDirname);
-              const basename = path.basename(docsFilePath);
-              // console.log('docsFilePath', docsFilePath, docsFileDirname, copyToPath);
-              if (!fs.existsSync(copyToPath)) {
-                fs.mkdirSync(copyToPath, { recursive: true });
-              }
-              const data = fs.readFileSync(docsFilePath, 'utf8');
-              fs.writeFileSync(path.join(copyToPath, basename), data, 'utf8');
-              if (fs.existsSync(path.join(copyToPath, basename))) {
-                tokens[idx].attrs[aIndex][1] = path.join('/blog/files', docsFileDirname, basename);
-                tokens[idx].attrPush(["download", basename]);
+            if (vaildExtNameArr.includes(extNmae)) {
+              const copyToPath = path.resolve(__dirname, "./public/files");
+
+              if (path.isAbsolute(href)) {
+              } else {
+                const docsFilePath = path.resolve(__dirname, "../", env.relativePath, "../", href);
+                const docsFileDirname = path.dirname(path.join(env.relativePath, "../", href));
+                const basename = path.basename(docsFilePath, extNmae);
+                // console.log("docsFilePath", docsFilePath, docsFileDirname, copyToPath);
+                if (!fs.existsSync(copyToPath)) {
+                  fs.mkdirSync(copyToPath, { recursive: true });
+                }
+                // console.log("docsFilePath", docsFilePath);
+                const fileInfo = fs.statSync(docsFilePath);
+                const data = fs.readFileSync(docsFilePath);
+                const hashCode = decodeChar.md5(data);
+                console.log("hashCode", fileInfo, data, hashCode);
+                if (fileInfo.size > sizeLimit) throw new Error(`${basename + extNmae}文件大小不能超过1M`);
+
+                const hashName = basename + "." + hashCode + extNmae;
+                fs.writeFileSync(path.join(copyToPath, hashName), data);
+                if (fs.existsSync(path.join(copyToPath, hashName))) {
+                  tokens[idx].attrs[aIndex][1] = path.join("/blog/files", hashName);
+                  tokens[idx].attrPush(["download", hashName]);
+                }
               }
             }
           }
-        }
 
-        return defaultRender(tokens, idx, options, env, self);
-      };
+          return defaultRender(tokens, idx, options, env, self);
+        };
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
 };

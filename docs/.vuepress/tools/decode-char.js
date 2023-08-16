@@ -1,5 +1,6 @@
 const mdurl = require("mdurl");
-export function isNeedDecode(url, config) {
+const crypto = require("crypto");
+function isNeedDecode(url, config) {
   config = config || "*";
 
   if (config === "*") {
@@ -18,7 +19,17 @@ export function isNeedDecode(url, config) {
   return config.some(a => url.startsWith(a));
 }
 
-export function decodeURL(url, config) {
-  url = isNeedDecode(url, config) ? mdurl.decode(url) : url;
-  return /^(\w+?:\/)?\.?\//.test(url) ? url : "./" + url;
+function decodeURL(url, config) {
+  // url = isNeedDecode(url, config) ? mdurl.decode(url) : url;
+  // return /^(\w+?:\/)?\.?\//.test(url) ? url : "./" + url;
+  return mdurl.decode(url);
+}
+
+function md5(content) {
+  return crypto.createHash('md5').update(content).digest('hex');
+}
+
+module.exports = {
+  decodeURL,
+  md5
 }
