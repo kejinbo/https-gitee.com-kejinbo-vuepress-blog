@@ -1,21 +1,19 @@
-const fs = import('fs');
 export default {
-  mounted() {
+  updated() {
     setTimeout(() => {
-      console.log("mounted");
-      document.querySelectorAll(".download-docs-file-btn").forEach((el) => {
-        const filePath = el.dataset.downloadLink;
-        console.log(filePath);
-        el.addEventListener("click", (e) => {
-          console.log(e);
-          // e.stopPropagation();
-          // e.preventDefault();
-          // fs.readFileSync(filePath, 'utf-8', (err, data) => {
-          //   console.log(data);
-          // });
-          // window.open(filePath);
-        });
+      // console.log("mounted");
+      document.querySelectorAll('img[class*=custom-file-download]').forEach((el) => {
+        const downloadList = el.parentElement.querySelectorAll('a[class*=custom-file-download]')
+        // console.log(el, el.parentElement, downloadList.length);
+        // 还没有创建这个元素
+        if (!downloadList.length) {
+          const a = document.createElement('a');
+          a.setAttribute('href', el.getAttribute('src'));
+          a.setAttribute('download', el.getAttribute('data-file-name'));
+          a.innerHTML =  el.getAttribute('data-file-name');
+          el.parentElement.appendChild(a);
+        }
       });
-    }, 200);
+    }, 100);
   },
 };
