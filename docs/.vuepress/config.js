@@ -94,38 +94,53 @@ module.exports = {
       try {
         md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
           const aIndex = tokens[idx].attrIndex("href");
-          const sizeLimit = 1 * 10000 * 1000; // 1M
+          const sizeLimit = 1 * 1024 * 1024; // 1M
           if (aIndex > -1) {
             const vaildExtNameArr = [".docx", ".doc", ".xlsx", ".xls"];
             const href = decodeChar.decodeURL(tokens[idx].attrs[aIndex][1]);
             const extNmae = path.extname(href).toLowerCase();
-            console.log("href", href, extNmae);
+            const folderName = 'files';
 
             if (vaildExtNameArr.includes(extNmae)) {
-              const copyToPath = path.resolve(__dirname, "./public/files");
+              const copyToPath = path.resolve(__dirname, `./public/${folderName}`);
+              let docsFilePath = '';
 
+              // 处理【相对路径】和【绝对路径】
               if (path.isAbsolute(href)) {
+                // /Desktop/测试用例.docx
+                // C:/Users/xxxx/Desktop/测试用例.docx
+                const parsePath = path.parse(href);
+                if (parsePath.root === '/' || parsePath.root === '\\') {
+                  docsFilePath = path.join(__dirname, href);
+                } else {
+                  docsFilePath = href;
+                }
               } else {
-                const docsFilePath = path.resolve(__dirname, "../", env.relativePath, "../", href);
-                const docsFileDirname = path.dirname(path.join(env.relativePath, "../", href));
-                const basename = path.basename(docsFilePath, extNmae);
-                // console.log("docsFilePath", docsFilePath, docsFileDirname, copyToPath);
-                if (!fs.existsSync(copyToPath)) {
-                  fs.mkdirSync(copyToPath, { recursive: true });
-                }
-                // console.log("docsFilePath", docsFilePath);
-                const fileInfo = fs.statSync(docsFilePath);
-                const data = fs.readFileSync(docsFilePath);
-                const hashCode = decodeChar.md5(data);
-                console.log("hashCode", fileInfo, data, hashCode);
-                if (fileInfo.size > sizeLimit) throw new Error(`${basename + extNmae}文件大小不能超过1M`);
+                // ../assests/测试.docx
+                // http(s):\xxx\测试.xls
+                if (href.startsWith('http')) return defaultRender(tokens, idx, options, env, self);
 
-                const hashName = basename + "." + hashCode + extNmae;
-                fs.writeFileSync(path.join(copyToPath, hashName), data);
-                if (fs.existsSync(path.join(copyToPath, hashName))) {
-                  tokens[idx].attrs[aIndex][1] = path.join("/blog/files", hashName);
-                  tokens[idx].attrPush(["download", hashName]);
-                }
+                docsFilePath = path.resolve(__dirname, "../", env.relativePath, "../", href);
+              }
+              const basename = path.basename(docsFilePath, extNmae);
+
+              // 如果拷贝的路径不存在，则创建一个
+              if (!fs.existsSync(copyToPath)) {
+                fs.mkdirSync(copyToPath, { recursive: true });
+              }
+              // console.log("docsFilePath", docsFilePath);
+              const fileInfo = fs.statSync(docsFilePath);
+              if (fileInfo.size > sizeLimit) throw new Error(`${basename + extNmae}文件大小不能超过1M`);
+
+              const data = fs.readFileSync(docsFilePath);
+              const hashCode = decodeChar.md5(data);
+              const hashName = basename + "." + hashCode + extNmae;
+              const copyFilePath = path.join(copyToPath, hashName);
+
+              fs.writeFileSync(copyFilePath, data);
+              if (fs.existsSync(copyFilePath)) {
+                tokens[idx].attrs[aIndex][1] = path.join("/blog/files", hashName);
+                tokens[idx].attrPush(["download", hashName]);
               }
             }
           }
