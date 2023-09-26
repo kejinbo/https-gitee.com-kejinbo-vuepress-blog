@@ -44,6 +44,21 @@ module.exports = {
           },
         ],
       },
+      {
+        title: "JS",
+        path: "/js",
+        collapsable: false,
+        children: [
+          {
+            title: "《你不知道的JS-上》",
+            path: "/js/you-not-know-js-1/",
+            collapsable: true,
+            children: [
+              { title: "编译原理", path: "/js/you-not-know-js-1/编译原理.md" },
+            ]
+          }
+        ]
+      }
     ],
   },
   plugins: [
