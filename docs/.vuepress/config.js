@@ -55,6 +55,9 @@ module.exports = {
             collapsable: true,
             children: [
               { title: "编译原理", path: "/js/you-not-know-js-1/编译原理.md" },
+              { title: "Eval和With", path: "/js/you-not-know-js-1/Eval和With.md" },
+              { title: "作用域", path: "/js/you-not-know-js-1/作用域.md" },
+              { title: "声明提升", path: "/js/you-not-know-js-1/声明提升.md" },
             ]
           }
         ]
