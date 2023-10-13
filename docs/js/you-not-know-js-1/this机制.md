@@ -1,0 +1,215 @@
+---
+title: this机制
+author: kebobo
+date: '2023-10-12'
+---
+
+> JS 中的 this 既不指向函数自身，也不指向函数的词法作用域。
+> JS 中的 this 表示当前执行区域的上下文。它指向什么完全取决于函数在哪里被调用。
+
+## this绑定的四条规则
+
+### 1，默认绑定（独立函数调用）
+
+当函数被直接使用，即直接调用方法，不加任何引用进行调用的情况下。函数的this会绑定到全局对象。
+
+我们来看下面的几个例子
+
+```javascript
+// 例子1
+var a = 2;
+function foo(){
+  console.log(this, this.a); // window对象 2
+}
+foo();
+
+// 例子2
+var a = 2;
+(function(){
+  var a = 3;
+
+  function foo(){
+    console.log(this, this.a); // window对象 2
+  }
+  foo(); // 2
+})();
+
+// 例子3
+var obj = { a: 2 };
+var a = 3;
+function foo() {
+  console.log(this, this.a); // { a: 2 } 2
+  function bar() {
+    console.log(this, this.a); // window对象 3
+  }
+  bar();
+}
+foo.call(obj);
+```
+
+上述例子中，由于函数都是直接调用，所以他们都应用了 **默认绑定** 规则。将this绑定到了全局对象上。例子3中，使用了一个显示绑定的规则 `foo.call(obj)`，他会将foo中的this，绑定到传入的对象obj上，这里做个试验，下面讲显式绑定再介绍。
+
+关于默认绑定，还有一个值得注意的地方。
+
+当我们使用严格模式（strict mode） `"use strict"`；这里的this默认绑定将不会被绑定到全局对象上，取而代之，将会被绑定到undefined上
+
+```javascript
+var a = 2;
+function foo() {
+  "use strict";
+  console.log(this, this.a);
+}
+foo(); // TypeError: this is undefined
+```
+
+### 2，隐式绑定
+
+函数调用是的位置具备上下文时，或者说被某个对象拥有或者包含时，this将被绑定到这个对象上
+
+```javascript
+function foo() {
+  consoe.log(this.a);
+}
+var obj = {
+  a: 2,
+  foo: foo,
+}
+obj.foo(); // 2
+```
+
+obj对象包含了foo，通过obj对foo进行调用，此时foo里面的this发生了变化，它被绑定到了对象obj上。
+
+隐式绑定还有一种容易判断错误的情况，值得我们注意：
+
+```javascript
+function foo() {
+  consoe.log(this.a);
+}
+
+function bar(fn) {
+  fn();
+}
+
+var a = 1;
+
+var obj = {
+  a: 2,
+  foo: foo
+};
+bar(obj.foo); // 1
+```
+
+我们发现，上面代码中，输出了全局变量的1，这是因为 bar 中的形式参数fn对函数foo进行了引用——foo函数被赋值到了fn上，这时又相当于**直接调用**了，所以便使用了默认绑定规则——this被绑定到了window。所以输出是1。
+
+### 3，显式绑定
+
+JS中的“所有”函数都会有一些有用的特性，这里涉及到原型的概念，函数会通过原型链找到一些内置方法。这些方法通常是共有的。具体我们会在【原型】篇章介绍。
+
+回归正题，显式绑定中需要我们用到函数的call、apply、bind方法。
+
+这三个方法会帮助我们将this绑定到指定对象，三个方法其中的差异，便是参数的传递，以及调用方式。
+
+```javascript
+// 例子1 call
+function foo() {
+  console.log(this.a);
+}
+var obj = {
+  a: 2;
+}
+var a = 3;
+foo.call(obj); // 2
+
+// 例子2 apply
+function foo(something) {
+  console.log(this.a, something);
+  return this.a + something
+}
+var obj = {
+  a: 2;
+}
+var bar = function() {
+  return foo.apply(obj, arguments);
+}
+var b = bar(3); // 2 3
+console.log(b); // 5
+
+// 例子3 是例子2的另一种写法，这里用到 bind
+function foo(something) {
+  console.log(this.a, something);
+  return this.a + something
+}
+var obj = {
+  a: 2;
+}
+var bar = foo.bind(obj);
+var b = bar(3); // 2 3
+console.log(b); // 5
+```
+
+bind是ES5提供的内置方法，他会返回一个硬编码的新函数，它会把你指定的参数设置为this的上下文 并 调用函数。
+
+在JS中还有许多内置函数，他们都提供一个可选的参数，用来修改this的绑定。
+
+```javascript
+function foo(el) {
+  console.log(el, this.id);
+}
+var obj = {
+  id: 'hh',
+}
+// 调用foo时把this绑定到obj
+[1,2,3].forEach(foo, obj); // 1 hh 2 hh 3 hh
+```
+
+同理还有 `Array.prototype.map`，`Array.prototype.some`，`Array.prototype.filter`等。具体可[查看文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array)来使用。
+
+另外还有个使用显示绑定的提醒：如果你传入了一个原始值（字符串类型、布尔类型或者数字类型）来当作this的绑定对象，这个原始值会被转换成它的对象形式（也就是new String(..)、new Boolean(..)或者new Number(..)）。这通常被称为“装箱”。
+
+### 4，new 绑定
+
+关于JS中的new关键字实际是对函数的一个“构造调用”，它跟其它面向类语言的new不太一样。传统的new关键字会创建一个类，而JS中的new会创建一个对象。
+
+> new 运算符创建一个用户定义的对象类型的实例或具有构造函数的内置对象的实例。
+
+在调用new关键字时，会自动执行以下操作：
+
+1. 创建一个空的简单的JS对象（即`{}`）
+2. 为步骤 1 新创建的对象添加属性 `__proto__`，将该属性链接至构造函数的原型对象。
+3. 将步骤 1 创建的对象作为 `this` 的上下文。
+4. 如果该函数没有返回对象，则返回 `this` 。
+
+```javascript
+function foo(a) {
+  this.a = a;
+}
+
+var bar = new foo(2); // bar对象作为了foo函数this的上下文。
+console.log(bar.a); // 2
+```
+
+还有一个需要注意的地方，步骤4如果有返回对象，那么新建的对象则是这个返回对象的副本。
+
+```javascript
+function Foo(test, desc, name) {
+  this.test = test;
+  this.desc = desc;
+  this.name = name;
+
+  return {
+    a: 1
+  }
+}
+
+const f1 = new Foo('hh', 'zz', 11);
+const f2 = new Foo('xx', 'yy', 12);
+
+console.log(f1.a);    // 1
+console.log(f1.test); // undefined
+console.log(f2.a);    // 1
+
+f1.a = 2;
+
+console.log(f1.a); // 2
+console.log(f2.a); // 1
+```

@@ -58,6 +58,9 @@ module.exports = {
               { title: "Eval和With", path: "/js/you-not-know-js-1/Eval和With.md" },
               { title: "作用域", path: "/js/you-not-know-js-1/作用域.md" },
               { title: "声明提升", path: "/js/you-not-know-js-1/声明提升.md" },
+              { title: "闭包", path: "/js/you-not-know-js-1/闭包.md" },
+              { title: "动态作用域与词法作用域", path: "/js/you-not-know-js-1/动态作用域与词法作用域.md" },
+              { title: "this机制", path: "/js/you-not-know-js-1/this机制.md" },
             ]
           }
         ]
