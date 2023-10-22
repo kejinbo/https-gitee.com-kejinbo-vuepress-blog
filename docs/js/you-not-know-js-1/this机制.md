@@ -220,3 +220,47 @@ console.log(f2.a); // 1
 2. 由 call 或者 apply （或者bind）调用？绑定到指定对象。
 3. 由上下文对象调用？绑定到这个上下文对象
 4. 默认：在严格模式下绑定到 undefined，否则绑定到全局对象。
+
+## api模拟实现
+
+### new模拟实现
+
+```javascript
+// 1. 创建一个空的简单的JS对象（即`{}`）
+// 2. 为步骤 1 新创建的对象添加属性 `__proto__`，将该属性链接至构造函数的原型对象。
+// 3. 将步骤 1 创建的对象作为 `this` 的上下文。
+// 4. 如果该函数没有返回对象，则返回 `this` 。
+function newFactory() {
+  var o = Object.create(null);
+  var Constructor = [].shift.call(arguments);
+  o.__proto__ = Constructor.prototype;
+  var result = Constructor.apply(o, arguments);
+  
+  return typeof result === 'object' ? result : o;
+}
+```
+
+### call模拟实现
+
+call的功能描述：
+
+> call() 方法在使用一个指定的 this 值和若干个指定的参数值的前提下调用某个函数或方法。
+
+```javascript
+// 1. 第一个参数：不在严格模式下，null 和 undefined 将被替换为全局对象，并且原始值(字面量的字符串，数字等)将被转换为对象
+// 2. 第二个参数是函数的参数
+// 3. 返回值是 使用指定的 this 值和参数调用函数后的结果。
+Function.prototype.myCall = function(context) {
+  context = context || window;
+  context.fn = this;
+
+  var args = [];
+  for(var i = 1, len = arguments.length; i < len; i++) {
+    args.push('arguments[' + i + ']');
+  }
+  var result = eval('context.fn(' + args +')');
+
+  delete context.fn;
+  return result;
+}
+```

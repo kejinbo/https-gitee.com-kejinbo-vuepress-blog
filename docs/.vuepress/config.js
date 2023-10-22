@@ -76,33 +76,7 @@ module.exports = {
         zIndex: 999999999, // z-index property of the canvas, default: 999999999
       },
     ],
-    // new WriteFilePlugin({
-    //   test: /.(docx|doc|xlsx|xls)(\?.*)?$/,
-    //   useHashIndex: true,
-    // }),
-    // new CopyPlugin({}),
-    (options, ctx) => {
-      return {
-        name: "download-docs-file",
-        clientRootMixin: path.resolve(__dirname, "download-docs-file/index.js"),
-      };
-    },
   ],
-  chainWebpack: (config, isServer) => {
-    // console.log(path.join(__dirname, "public"));
-    // config.devServer.contentBase = path.join(__dirname, "public");
-
-    config.module
-      .rule("docx-files")
-      .test(/.(docx|doc|xlsx|xls)(\?.*)?$/)
-      .use("file-loader")
-      .loader("file-loader")
-      .options({
-        limit: 1000,
-        name: `assets/files/[name].[hash:8].[ext]`,
-      })
-      .end();
-  },
   markdown: {
     lineNumbers: true,
     extendMarkdown: (md) => {
