@@ -54,13 +54,18 @@ module.exports = {
             path: "/js/you-not-know-js-1/",
             collapsable: true,
             children: [
-              { title: "编译原理", path: "/js/you-not-know-js-1/编译原理.md" },
-              { title: "Eval和With", path: "/js/you-not-know-js-1/Eval和With.md" },
-              { title: "作用域", path: "/js/you-not-know-js-1/作用域.md" },
-              { title: "声明提升", path: "/js/you-not-know-js-1/声明提升.md" },
-              { title: "闭包", path: "/js/you-not-know-js-1/闭包.md" },
-              { title: "动态作用域与词法作用域", path: "/js/you-not-know-js-1/动态作用域与词法作用域.md" },
-              { title: "this机制", path: "/js/you-not-know-js-1/this机制.md" },
+              { title: "1. 编译原理", path: "/js/you-not-know-js-1/1. 编译原理.md" },
+              { title: "2. Eval和With", path: "/js/you-not-know-js-1/2. Eval和With.md" },
+              { title: "3. 作用域", path: "/js/you-not-know-js-1/3. 作用域.md" },
+              { title: "4. 声明提升", path: "/js/you-not-know-js-1/4. 声明提升.md" },
+              { title: "5. 闭包", path: "/js/you-not-know-js-1/5. 闭包.md" },
+              { title: "6. 动态作用域与词法作用域", path: "/js/you-not-know-js-1/6. 动态作用域与词法作用域.md" },
+              { title: "第二部分—1. this机制", path: "/js/you-not-know-js-1/第二部分—1. this机制.md" },
+              { title: "第二部分—2. 混合对象“类”", path: "/js/you-not-know-js-1/第二部分—2. 混合对象“类”.md" },
+              { title: "第二部分—3. 对象", path: "/js/you-not-know-js-1/第二部分—3. 对象.md" },
+              { title: "第二部分—4. 原型", path: "/js/you-not-know-js-1/第二部分—4. 原型.md" },
+              { title: "第二部分—5. 行为委托", path: "/js/you-not-know-js-1/第二部分—5. 行为委托.md" },
+              { title: "书中方法的模拟实现集", path: "/js/you-not-know-js-1/书中方法的模拟实现集.md" },
             ]
           }
         ]
