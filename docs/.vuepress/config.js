@@ -5,7 +5,7 @@ const decodeChar = require("./tools/decode-char");
 module.exports = {
   title: "Blog",
   description: "gentlekoala的Blog文档",
-  base: "/blog/",
+  base: "/",
   theme: "reco",
   locales: {
     "/": {
