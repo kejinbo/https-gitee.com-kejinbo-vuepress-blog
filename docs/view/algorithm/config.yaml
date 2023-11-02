@@ -1,0 +1,12 @@
+title: 算法
+path: /view/algorithm/
+collapsable: false
+children:
+  - title: leetcode算法题
+    path: /view/algorithm/leetcode/
+    collapsable: true
+    children:
+      - title: 06-Z字形变换
+        path: /view/algorithm/leetcode/06-Z字形变换.md
+      - title: 118-杨辉三角
+        path: /view/algorithm/leetcode/118-杨辉三角.md

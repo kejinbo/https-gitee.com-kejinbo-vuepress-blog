@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("path");
 const decodeChar = require("./tools/decode-char");
+const { generateSidebar } = require('./utils/config.js');
 
 module.exports = {
   title: "Blog",
@@ -28,48 +29,7 @@ module.exports = {
     ],
     sidebar: [
       { title: "欢迎学习", path: "/", collapsable: false, children: [{ title: "学前必读", path: "/" }] },
-      {
-        title: "算法",
-        path: "/algorithm",
-        collapsable: false,
-        children: [
-          {
-            title: "leetcode",
-            path: "/algorithm/leetcode/",
-            collapsable: true,
-            children: [
-              { title: "06-Z字形变换", path: "/algorithm/leetcode/06-Z字形变换.md" },
-              { title: "118-杨辉三角", path: "/algorithm/leetcode/118-杨辉三角.md" },
-            ],
-          },
-        ],
-      },
-      {
-        title: "JS",
-        path: "/js",
-        collapsable: false,
-        children: [
-          {
-            title: "《你不知道的JS-上》",
-            path: "/js/you-not-know-js-1/",
-            collapsable: true,
-            children: [
-              { title: "1. 编译原理", path: "/js/you-not-know-js-1/1. 编译原理.md" },
-              { title: "2. Eval和With", path: "/js/you-not-know-js-1/2. Eval和With.md" },
-              { title: "3. 作用域", path: "/js/you-not-know-js-1/3. 作用域.md" },
-              { title: "4. 声明提升", path: "/js/you-not-know-js-1/4. 声明提升.md" },
-              { title: "5. 闭包", path: "/js/you-not-know-js-1/5. 闭包.md" },
-              { title: "6. 动态作用域与词法作用域", path: "/js/you-not-know-js-1/6. 动态作用域与词法作用域.md" },
-              { title: "第二部分—1. this机制", path: "/js/you-not-know-js-1/第二部分—1. this机制.md" },
-              { title: "第二部分—2. 混合对象“类”", path: "/js/you-not-know-js-1/第二部分—2. 混合对象“类”.md" },
-              { title: "第二部分—3. 对象", path: "/js/you-not-know-js-1/第二部分—3. 对象.md" },
-              { title: "第二部分—4. 原型", path: "/js/you-not-know-js-1/第二部分—4. 原型.md" },
-              { title: "第二部分—5. 行为委托", path: "/js/you-not-know-js-1/第二部分—5. 行为委托.md" },
-              { title: "书中方法的模拟实现集", path: "/js/you-not-know-js-1/书中方法的模拟实现集.md" },
-            ]
-          }
-        ]
-      }
+      ...generateSidebar()
     ],
   },
   plugins: [
