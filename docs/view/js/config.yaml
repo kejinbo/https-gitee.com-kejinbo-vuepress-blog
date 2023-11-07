@@ -20,10 +20,10 @@ children:
         path: /view/js/you-not-know-js-1/6. 动态作用域与词法作用域.md
       - title: 第二部分—1. this机制.md
         path: /view/js/you-not-know-js-1/第二部分—1. this机制.md
-      - title: 第二部分—2. 混合对象“类”.md
-        path: /view/js/you-not-know-js-1/第二部分—2. 混合对象“类”.md
-      - title: 第二部分—3. 对象.md
-        path: /view/js/you-not-know-js-1/第二部分—3. 对象.md
+      - title: 第二部分—2. 对象.md
+        path: /view/js/you-not-know-js-1/第二部分—2. 对象.md
+      - title: 第二部分—3. 混合对象“类”.md
+        path: /view/js/you-not-know-js-1/第二部分—3. 混合对象“类”.md
       - title: 第二部分—4. 原型.md
         path: /view/js/you-not-know-js-1/第二部分—4. 原型.md
       - title: 第二部分—5. 行为委托.md
@@ -34,5 +34,5 @@ children:
     path: /view/js/you-not-know-js-2/
     collapsable: true
     children:
-      - title: 第二部分—1. 异步：现在与将来.md
-        path: /view/js/you-not-know-js-2/第二部分—1. 异步：现在与将来.md
+      # - title: 第二部分—1. 异步：现在与将来.md
+      #   path: /view/js/you-not-know-js-2/第二部分—1. 异步：现在与将来.md
