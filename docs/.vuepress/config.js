@@ -33,6 +33,8 @@ module.exports = {
     ],
   },
   plugins: [
+    '@vuepress/nprogress', // 加载进度条
+    'reading-progress', // 阅读进度条
     [
       "cursor-effects",
       {
@@ -41,7 +43,6 @@ module.exports = {
         zIndex: 999999999, // z-index property of the canvas, default: 999999999
       },
     ],
-    '@vuepress/nprogress',
   ],
   markdown: {
     lineNumbers: true,
