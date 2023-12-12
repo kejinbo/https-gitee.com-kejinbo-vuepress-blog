@@ -42,5 +42,7 @@ children:
         path: /view/js/you-not-know-js-2/第二部分—3. Promise.md
       - title: 第二部分—4. 生成器
         path: /view/js/you-not-know-js-2/第二部分—4. 生成器.md
+      - title: 第二部分—5. 程序性能
+        path: /view/js/you-not-know-js-2/第二部分—5. 程序性能.md
       - title: 书中提及的问题的解决方法集
         path: /view/js/you-not-know-js-2/书中提及的问题的解决方法集.md
