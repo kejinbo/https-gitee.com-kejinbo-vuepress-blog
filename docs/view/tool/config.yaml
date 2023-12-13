@@ -8,3 +8,9 @@ children:
     children:
       - title: 使用git rebase合并多次commit
         path: /view/tool/git/使用git rebase合并多次commit.md
+  - title: 其他
+    path: /view/tool/other/
+    collapsable: true
+    children:
+      - title: npm使用
+        path: /view/tool/other/npm使用.md
