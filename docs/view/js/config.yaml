@@ -44,5 +44,19 @@ children:
         path: /view/js/you-not-know-js-2/第二部分—4. 生成器.md
       - title: 第二部分—5. 程序性能
         path: /view/js/you-not-know-js-2/第二部分—5. 程序性能.md
+      - title: 第二部分—6. 性能测试与调优.md
+        path: /view/js/you-not-know-js-2/第二部分—6. 性能测试与调优.md
       - title: 书中提及的问题的解决方法集
         path: /view/js/you-not-know-js-2/书中提及的问题的解决方法集.md
+  - title: 《vue设计与实现》
+    path: /view/js/vue设计与实现/
+    collapsable: true
+    children:
+      - title: 第1章—权衡的艺术
+        path: /view/js/vue设计与实现/第1章—权衡的艺术.md
+      - title: 第2章—框架设计的核心要素
+        path: /view/js/vue设计与实现/第2章—框架设计的核心要素.md
+      - title: 第3章—Vue.js 3 的设计思路
+        path: /view/js/vue设计与实现/第3章—Vue.js 3 的设计思路.md
+      - title: 第4章—响应系统的作用与实现
+        path: /view/js/vue设计与实现/第4章—响应系统的作用与实现.md
